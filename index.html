@@ -135,6 +135,7 @@ button.av{cursor:pointer}
 /* Fiş tarama + kalem kalem */
 .modes{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
 .modes button{flex:1 1 140px;padding:10px 12px;font-size:14px}
+.modes .cam{flex-basis:100%;padding:12px;font-size:15px}
 .scan{display:grid;gap:8px;background:var(--field);border-radius:12px;padding:10px 12px;margin-top:10px}
 .scan-row{display:flex;justify-content:space-between;gap:10px;font-size:14px;font-weight:600}
 .scan-row.ok{color:var(--get)} .scan-row.bad{color:var(--owe)}
@@ -282,9 +283,11 @@ button.ghost.confirm{background:var(--danger);color:var(--on-danger);border-colo
       </div>
       <div class="quick" id="quickDescs"></div>
       <div class="modes">
-        <button type="button" class="soft" id="scanBtn">📷 Fiş tara</button>
+        <button type="button" class="soft cam" id="scanBtn">📷 Fişin fotoğrafını çek</button>
+        <button type="button" class="ghost" id="galleryBtn">Galeriden seç</button>
         <button type="button" class="ghost" id="itemsBtn">Kalem kalem gir</button>
       </div>
+      <input type="file" id="scanCam" accept="image/*" capture="environment" hidden>
       <input type="file" id="scanFile" accept="image/*" hidden>
       <div class="scan" id="scanBox" hidden>
         <div class="scan-row" id="scanRow"><span id="scanMsg"></span><span class="num" id="scanPct"></span></div>
@@ -805,13 +808,15 @@ function showScan(msg,p){$('scanBox').hidden=false;$('scanRow').className='scan-
 function scanDone(msg,kind){$('scanBox').hidden=false;$('scanRow').className='scan-row '+(kind||'');$('scanMsg').textContent=msg;$('scanPct').textContent='';$('scanBarWrap').hidden=true}
 function hideScan(){$('scanBox').hidden=true}
 let scanning=false;
-$('scanBtn').addEventListener('click',()=>{
+function pickPhoto(inputId){
   if(!IS_APP){flash('Fiş tarama, telefona yüklediğin PAYLAŞ uygulamasında çalışır.');return}
   if(!S.people.length){flash('Önce kişi ekle.');return}
-  if(scanning)return;$('scanFile').click()});
-$('scanFile').addEventListener('change',async e=>{const f=e.target.files&&e.target.files[0];e.target.value='';if(f)await scanReceipt(f)});
+  if(scanning)return;$(inputId).click()}
+$('scanBtn').addEventListener('click',()=>pickPhoto('scanCam'));
+$('galleryBtn').addEventListener('click',()=>pickPhoto('scanFile'));
+['scanCam','scanFile'].forEach(id=>$(id).addEventListener('change',async e=>{const f=e.target.files&&e.target.files[0];e.target.value='';if(f)await scanReceipt(f)}));
 async function scanReceipt(file){
-  scanning=true;$('scanBtn').disabled=true;
+  scanning=true;$('scanBtn').disabled=true;$('galleryBtn').disabled=true;
   try{
     showScan('Fotoğraf hazırlanıyor…',0.02);
     let cv;try{cv=await prepImage(file)}catch(e){scanDone('Fotoğraf açılamadı. Başka bir fotoğraf dene.','bad');return}
@@ -827,7 +832,7 @@ async function scanReceipt(file){
     const t=res.total!=null&&Math.round(res.total*100)===Math.round(res.sum*100);
     scanDone(`${res.items.length} kalem bulundu${t?', toplam tutuyor ✓':''}. Şimdi kim ne aldıysa ona dokun.`,'ok');
     $('itemsBox').scrollIntoView({behavior:'smooth',block:'start'});
-  }finally{scanning=false;$('scanBtn').disabled=false;OCR.onp=null}
+  }finally{scanning=false;$('scanBtn').disabled=false;$('galleryBtn').disabled=false;OCR.onp=null}
 }
 
 /* Kaydet */
