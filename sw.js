@@ -1,9 +1,9 @@
-// PAYLAŞ: uygulama dosyalarını ve fontları cihazda saklar, internetsiz açılır.
-const VERSION='paylas-v1';
+// PAYLAŞ: internet varken her açılışta en yeni sürümü yükler, yoksa cihazdaki kopyayla açılır.
+const VERSION='paylas-v2';
 const FONTS='paylas-fonts';
 const SHELL=['./','./index.html','./manifest.webmanifest','./icon-192.png','./icon-512.png'];
 const FONT_CSS='https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Unbounded:wght@700;800&display=swap';
-self.addEventListener('install',e=>{e.waitUntil(caches.open(VERSION).then(c=>c.addAll(SHELL)).then(()=>self.skipWaiting()))});
+self.addEventListener('install',e=>{e.waitUntil(caches.open(VERSION).then(c=>c.addAll(SHELL.map(u=>new Request(u,{cache:'reload'})))).then(()=>self.skipWaiting()))});
 async function cacheFonts(){
   try{
     const fc=await caches.open(FONTS);
@@ -34,10 +34,26 @@ self.addEventListener('fetch',e=>{
     return;
   }
   if(url.origin!==self.location.origin)return;
+  const isPage=req.mode==='navigate'||url.pathname.endsWith('/')||url.pathname.endsWith('.html');
+  if(isPage){
+    // sayfa: önce internet (her zaman en yeni sürüm), olmazsa cihazdaki kopya
+    e.respondWith((async()=>{
+      const c=await caches.open(VERSION);
+      try{
+        const res=await fetch(url.href,{cache:'no-cache'});
+        if(res.ok){const copy=res.clone();e.waitUntil(Promise.all([c.put(url.href,copy.clone()),c.put(new URL('./index.html',self.registration.scope).href,copy)]))}
+        return res;
+      }catch(err){
+        return (await c.match(url.href,{ignoreSearch:true}))||(await c.match('./index.html'))||(await c.match('./'))||Response.error();
+      }
+    })());
+    return;
+  }
+  // simgeler ve diğer dosyalar: hızlı açılış için cihazdaki kopya, arkada güncelle
   const work=(async()=>{
     const c=await caches.open(VERSION);
-    const hit=(await c.match(req,{ignoreSearch:true}))||(req.mode==='navigate'?await c.match('./index.html'):undefined);
-    const net=fetch(req).then(async res=>{if(res.ok)await c.put(req,res.clone());return res}).catch(()=>hit||Response.error());
+    const hit=await c.match(req,{ignoreSearch:true});
+    const net=fetch(req,{cache:'no-cache'}).then(async res=>{if(res.ok)await c.put(req,res.clone());return res}).catch(()=>hit||Response.error());
     return {hit,net};
   })();
   e.respondWith(work.then(({hit,net})=>hit||net));

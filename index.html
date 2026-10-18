@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Paylaş</title>
 <meta name="description" content="Kim ne ödedi, kim kime ne kadar verecek. Grup harcamalarını bölüş.">
-<meta name="theme-color" content="#f5f5f5">
+<meta name="theme-color" content="#F8F4F2">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="icon-192.png" type="image/png">
 <link rel="apple-touch-icon" href="icon-192.png">
@@ -24,13 +24,13 @@ img{max-width:100%}
 </style>
 <style>
 /* Layout: tek sütun, yumuşak kartlar — kişiler, harcama girişi, liste, hesaplaşma.
-   Kimlik: PAY (vurgu bloğu) + LAŞ logotipi; açılış siyah-beyaz, palet seçilince o renge geçer.
-   Palet ham değerleri (-l açık, -d koyu) data-palette ile değişir; mod blokları bunlardan seçer. */
+   Kimlik: mercan; PAY (vurgu bloğu) + LAŞ logotipi.
+   Ham değerler (-l açık, -d koyu); mod blokları bunlardan seçer. */
 :root{
-  --a-l:#111111; --ai-l:#111111; --oa-l:#ffffff; --s-l:#eeeeee;
-  --a-d:#f2f2f2; --ai-d:#f2f2f2; --oa-d:#111111; --s-d:#272727;
-  --bg-l:#f5f5f5; --ln-l:#e3e3e3; --ink-l:#111111; --mu-l:#6b6b6b;
-  --bg-d:#0d0d0d; --pp-d:#181818; --ln-d:#2c2c2c; --ink-d:#f2f2f2; --mu-d:#a3a3a3;
+  --a-l:#D3432C; --ai-l:#B8361F; --oa-l:#ffffff; --s-l:#FCE8E3;
+  --a-d:#F0705C; --ai-d:#FF9A88; --oa-d:#1A0E0B; --s-d:#3A1B15;
+  --bg-l:#F8F4F2; --ln-l:#EDE2DE; --ink-l:#241B19; --mu-l:#7A6B67;
+  --bg-d:#141011; --pp-d:#1F1816; --ln-d:#352A27; --ink-d:#F6EFED; --mu-d:#AE9F9B;
   --bg:var(--bg-l); --paper:#ffffff; --field:var(--bg-l); --ink:var(--ink-l); --muted:var(--mu-l); --line:var(--ln-l);
   --accent:var(--a-l); --accent-ink:var(--ai-l); --on-accent:var(--oa-l); --accent-soft:var(--s-l);
   --get:#007a51; --get-soft:#e1f3ea; --owe:#c4352b; --owe-soft:#fbe6e3;
@@ -39,10 +39,6 @@ img{max-width:100%}
   --f-display:"Unbounded", "Arial Black", system-ui, sans-serif;
   --f-body:"Plus Jakarta Sans", system-ui, -apple-system, sans-serif;
 }
-:root[data-palette="bvb"]{--a-l:#fde100;--ai-l:#111111;--oa-l:#111111;--s-l:#fff6c2;--a-d:#fde100;--ai-d:#fde100;--oa-d:#111111;--s-d:#2c2706;--bg-l:#f6f5ef;--ln-l:#e6e3d4;--ink-l:#111111;--mu-l:#6d6a5c;--bg-d:#0c0c0a;--pp-d:#171714;--ln-d:#2c2b25;--ink-d:#f5f4ee;--mu-d:#a9a796}
-:root[data-palette="lacivert"]{--a-l:#24438f;--ai-l:#24438f;--oa-l:#ffffff;--s-l:#e6ecf8;--a-d:#4c6fd0;--ai-d:#a9bff5;--oa-d:#ffffff;--s-d:#1a2340;--bg-l:#f4f5f8;--ln-l:#e1e5ee;--ink-l:#1a1f2b;--mu-l:#6b7280;--bg-d:#0f1218;--pp-d:#181c25;--ln-d:#2a303d;--ink-d:#eef1f6;--mu-d:#9ba3b4}
-:root[data-palette="petrol"]{--a-l:#0f5f6e;--ai-l:#0f5f6e;--oa-l:#ffffff;--s-l:#e2f0f2;--a-d:#1f8a9c;--ai-d:#8fd3de;--oa-d:#ffffff;--s-d:#11292e;--bg-l:#f3f6f6;--ln-l:#dfe7e8;--ink-l:#172225;--mu-l:#64767a;--bg-d:#0d1314;--pp-d:#161e20;--ln-d:#273336;--ink-d:#ecf3f4;--mu-d:#98aaae}
-:root[data-palette="murdum"]{--a-l:#7a2453;--ai-l:#7a2453;--oa-l:#ffffff;--s-l:#f6e8ef;--a-d:#b8417f;--ai-d:#f0a3cc;--oa-d:#ffffff;--s-d:#3a1c2c;--bg-l:#f7f4f5;--ln-l:#ebe3e7;--ink-l:#241a20;--mu-l:#7a6d74;--bg-d:#141013;--pp-d:#1f181c;--ln-d:#352a30;--ink-d:#f4eef1;--mu-d:#ad9fa7}
 @media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
   --bg:var(--bg-d); --paper:var(--pp-d); --field:var(--bg-d); --ink:var(--ink-d); --muted:var(--mu-d); --line:var(--ln-d);
   --accent:var(--a-d); --accent-ink:var(--ai-d); --on-accent:var(--oa-d); --accent-soft:var(--s-d);
@@ -66,7 +62,6 @@ h1{font:800 clamp(34px,10vw,46px)/1.1 var(--f-display);letter-spacing:-.01em;mar
 h1 .hl{display:inline-block;background:var(--accent);color:var(--on-accent);padding:.04em .16em .06em;border-radius:.14em;margin-right:.08em}
 .sub{color:var(--muted);margin:10px 0 0;font-size:14px;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
 .badge{font-size:12px;background:var(--accent-soft);color:var(--accent-ink);border-radius:999px;padding:2px 10px;font-weight:700}
-.palette{display:flex;align-items:center;gap:8px}
 .sw{--sw:#111111;--t:#ffffff;width:28px;height:28px;border-radius:50%;padding:0;background:var(--sw);border:2px solid var(--paper);box-shadow:0 0 0 1px var(--line);color:var(--t);font:800 12px/1 var(--f-body);display:grid;place-items:center;cursor:pointer}
 .sw.on{box-shadow:0 0 0 2px var(--ink)}
 /* Kartlar */
@@ -160,7 +155,7 @@ ul.list .num{font-weight:700}
 /* Hesaplaşma */
 .total{display:flex;justify-content:space-between;align-items:center;gap:12px;background:var(--accent-soft);border-radius:16px;padding:14px 16px;margin-bottom:16px}
 .total span:first-child{font-weight:700}
-.total .num{font-size:26px;font-weight:800;color:var(--accent-ink);letter-spacing:-.01em}
+.total .num{font-size:26px;font-weight:800;color:var(--ink);letter-spacing:-.01em}
 .transfers{display:grid;gap:8px;margin-top:8px}
 .tr{display:flex;align-items:center;gap:10px;background:var(--field);border-radius:14px;padding:10px 12px}
 .pair{flex:1;min-width:0;display:flex;flex-wrap:wrap;align-items:center;gap:6px}
@@ -216,10 +211,6 @@ button.ghost.confirm{background:var(--danger);color:var(--on-danger);border-colo
       <p class="sub">Kim ne ödedi, kim kime ne kadar verecek. <span class="badge" id="sampleBadge" hidden>Örnek veri</span></p>
       <button type="button" class="install" id="installBtn" hidden>Uygulamayı yükle</button>
       <p class="hint" id="iosHint" hidden>Yüklemek için Safari’de Paylaş → Ana Ekrana Ekle.</p>
-    </div>
-    <div class="palette" role="radiogroup" aria-label="Renk paleti">
-      <span class="hint">Renk</span>
-      <span id="paletteList" style="display:flex;gap:8px"></span>
     </div>
   </header>
 
@@ -310,12 +301,6 @@ button.ghost.confirm{background:var(--danger);color:var(--on-danger);border-colo
 const KEY='hesap-bolus-v1', HKEY='hesap-bolus-gecmis-v1';
 const DEFAULT_DESCS=['Akşam yemeği','Kahvaltı','Market','Kahve','Taksi','Benzin','Konaklama','Bilet'];
 const PCOL=['#1c7ed6','#fd7e14','#7048e8','#82c91e','#e64980','#15aabf','#fcc419','#364fc7'];
-const PALETTES=[
-  {id:'siyah',name:'Siyah-Beyaz',sw:'linear-gradient(135deg,#111111 50%,#ffffff 50%)'},
-  {id:'bvb',name:'Dortmund',sw:'linear-gradient(135deg,#fde100 50%,#111111 50%)'},
-  {id:'lacivert',name:'Lacivert',sw:'#24438f'},
-  {id:'petrol',name:'Petrol',sw:'#0f5f6e'},
-  {id:'murdum',name:'Mürdüm',sw:'#7a2453'}];
 const fmt=n=>{const s=(Math.round(Math.abs(n)*100)/100).toLocaleString('tr-TR',{minimumFractionDigits:2,maximumFractionDigits:2});return (n<-0.004?'-':'')+'₺'+s};
 const fmtC=c=>fmt(c/100);
 const uid=()=>Math.random().toString(36).slice(2,9);
@@ -341,8 +326,6 @@ if(!Array.isArray(S.payments))S.payments=[];
 if(!H||!Array.isArray(H.names))H={names:[],descs:DEFAULT_DESCS.slice()};
 if(!Array.isArray(H.descs))H.descs=DEFAULT_DESCS.slice();
 if(!H.colors||typeof H.colors!=='object')H.colors={};
-if(H.pv!==2){H.palette='siyah';H.pv=2}
-if(!PALETTES.some(p=>p.id===H.palette))H.palette='siyah';
 S.people.forEach(p=>{if(!PCOL.includes(p.color)){const m=H.colors[low(p.name)];p.color=PCOL.includes(m)&&!S.people.some(q=>q!==p&&q.color===m)?m:nextColor(p.id)}});
 if(!S.sample)S.people.forEach(p=>{remember('names',p.name);H.colors[low(p.name)]=p.color});
 let confirmReset=false,resetTimer=null,colorFor=null,editId=null;
@@ -358,8 +341,6 @@ const av=p=>`<span class="av" style="${avStyle(p.color)}" aria-hidden="true">${e
 function remember(list,v){v=v.trim();if(!v)return;H[list]=H[list].filter(x=>low(x)!==low(v));H[list].unshift(v);H[list]=H[list].slice(0,60)}
 function nextColor(exceptId){const used=new Set(S.people.filter(p=>p.id!==exceptId).map(p=>p.color));return PCOL.find(c=>!used.has(c))||PCOL[S.people.length%PCOL.length]}
 function unsample(){S.sample=false}
-function applyPalette(){document.documentElement.setAttribute('data-palette',H.palette);
-  $('paletteList').innerHTML=PALETTES.map(p=>`<button type="button" class="sw ${p.id===H.palette?'on':''}" style="--sw:${p.sw}" role="radio" aria-checked="${p.id===H.palette}" aria-label="${p.name}" title="${p.name}" data-pal="${p.id}"></button>`).join('')}
 
 /* Hesap: kuruş cinsinden */
 function compute(){
@@ -496,8 +477,6 @@ function render(){
     return `<div class="payrow">${av(a)}<span class="nm">${esc(a.name)} → ${esc(b.name)} <small>${d}</small></span><span class="num">${fmt(pm.amount)}</span><button class="x" type="button" data-unpay="${pm.id}" aria-label="Ödemeyi geri al">×</button></div>`}).join('');
 }
 
-/* Renk paleti */
-$('paletteList').addEventListener('click',e=>{const b=e.target.closest('[data-pal]');if(!b)return;H.palette=b.dataset.pal;save();applyPalette()});
 
 /* Kişiler */
 function addPerson(n){n=n.trim();if(!n)return;
@@ -704,12 +683,10 @@ $('shareBtn').addEventListener('click',()=>{
   });
 });
 $('full').addEventListener('click',()=>$('full').hidden=true);
-applyPalette();
 render();
 /* Uygulama: tema rengi, kurulum, çevrimdışı çalışma */
 function syncThemeColor(){const m=document.querySelector('meta[name="theme-color"]');if(m)m.setAttribute('content',css('--bg','#f5f5f5'))}
 syncThemeColor();
-$('paletteList').addEventListener('click',()=>setTimeout(syncThemeColor,0));
 try{matchMedia('(prefers-color-scheme: dark)').addEventListener('change',syncThemeColor)}catch(e){}
 const isStandalone=()=>matchMedia('(display-mode: standalone)').matches||navigator.standalone===true;
 const isIOS=/iPhone|iPad|iPod/i.test(navigator.userAgent)||(/Macintosh/.test(navigator.userAgent)&&navigator.maxTouchPoints>1);
