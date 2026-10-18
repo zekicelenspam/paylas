@@ -34,7 +34,7 @@ self.addEventListener('fetch',e=>{
     return;
   }
   if(url.origin!==self.location.origin)return;
-  const isPage=req.mode==='navigate'||url.pathname.endsWith('/')||url.pathname.endsWith('.html');
+  const isPage=req.mode==='navigate'||url.pathname.endsWith('/')||url.pathname.endsWith('.html')||url.pathname.endsWith('.webmanifest');
   if(isPage){
     // sayfa: önce internet (her zaman en yeni sürüm), olmazsa cihazdaki kopya
     e.respondWith((async()=>{
