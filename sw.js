@@ -1,5 +1,6 @@
 // PAYLAŞ: internet varken her açılışta en yeni sürümü yükler, yoksa cihazdaki kopyayla açılır.
-const VERSION='paylas-v2';
+const VERSION='paylas-v3';
+const OCRC='paylas-ocr';
 const FONTS='paylas-fonts';
 const SHELL=['./','./index.html','./manifest.webmanifest','./icon-192.png','./icon-512.png'];
 const FONT_CSS='https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Unbounded:wght@700;800&display=swap';
@@ -17,7 +18,7 @@ async function cacheFonts(){
 }
 self.addEventListener('activate',e=>{e.waitUntil((async()=>{
   const keys=await caches.keys();
-  await Promise.all(keys.filter(k=>k!==VERSION&&k!==FONTS).map(k=>caches.delete(k)));
+  await Promise.all(keys.filter(k=>k!==VERSION&&k!==FONTS&&k!==OCRC).map(k=>caches.delete(k)));
   await self.clients.claim();
   await cacheFonts();
 })())});
@@ -30,6 +31,16 @@ self.addEventListener('fetch',e=>{
       const hit=await fc.match(req,{ignoreVary:true});
       if(hit)return hit;
       try{const res=await fetch(req);if(res.ok||res.type==='opaque')fc.put(req,res.clone());return res}catch(err){return Response.error()}
+    })());
+    return;
+  }
+  if(url.hostname==='cdn.jsdelivr.net'){
+    // fiş okuma paketi: bir kez indir, sonra cihazdan (internetsiz de çalışsın)
+    e.respondWith((async()=>{
+      const oc=await caches.open(OCRC);
+      const hit=await oc.match(req);
+      if(hit)return hit;
+      const res=await fetch(req);if(res.ok||res.type==='opaque')e.waitUntil(oc.put(req,res.clone()));return res;
     })());
     return;
   }
