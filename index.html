@@ -3,15 +3,15 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>Paylaş</title>
-<meta name="description" content="Kim ne ödedi, kim kime ne kadar verecek. Grup harcamalarını bölüş.">
+<title>Alman Usulü</title>
+<meta name="description" content="Alman usulü hesap bölüşme: fişi tara, kim ne aldıysa ona dağıt, IBAN ile iste.">
 <meta name="theme-color" content="#F8F4F2">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="icon-192.png" type="image/png">
 <link rel="apple-touch-icon" href="icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-title" content="Paylaş">
+<meta name="apple-mobile-web-app-title" content="Alman Usulü">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Unbounded:wght@700;800&display=swap">
@@ -24,7 +24,7 @@ img{max-width:100%}
 </style>
 <style>
 /* Layout: tek sütun, yumuşak kartlar — kişiler, harcama girişi (eşit ya da kalem kalem), liste, hesaplaşma.
-   Kimlik: mercan; PAY (vurgu bloğu) + LAŞ logotipi.
+   Kimlik: mercan; ALMAN (vurgu bloğu) + USULÜ logotipi, bölünmüş adisyon simgesi.
    Ham değerler (-l açık, -d koyu); mod blokları bunlardan seçer. */
 :root{
   --a-l:#D3432C; --ai-l:#B8361F; --oa-l:#ffffff; --s-l:#FCE8E3;
@@ -62,7 +62,8 @@ body{background:var(--bg);color:var(--ink);font:15px/1.5 var(--f-body);
 .num{font-variant-numeric:tabular-nums;white-space:nowrap}
 /* Başlık */
 header{display:flex;align-items:flex-end;justify-content:space-between;gap:14px 16px;flex-wrap:wrap;padding:4px 2px 2px}
-h1{font:800 clamp(34px,10vw,46px)/1.1 var(--f-display);letter-spacing:-.01em;margin:0;color:var(--ink)}
+h1{font:800 clamp(26px,8.6vw,44px)/1.1 var(--f-display);letter-spacing:-.01em;margin:0;color:var(--ink);white-space:nowrap}
+header>div{min-width:0;flex:1 1 auto}
 h1 .hl{display:inline-block;background:var(--accent);color:var(--on-accent);padding:.04em .16em .06em;border-radius:.14em;margin-right:.08em}
 .sub{color:var(--muted);margin:10px 0 0;font-size:14px;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
 .badge{font-size:12px;background:var(--accent-soft);color:var(--accent-ink);border-radius:999px;padding:2px 10px;font-weight:700}
@@ -213,12 +214,9 @@ details.more[open] summary::after{content:"▴"}
 .bal .num{font-weight:700}
 .bal .pos{color:var(--get)} .bal .neg{color:var(--owe)}
 a.wa{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;margin-top:16px;padding:13px 16px;border-radius:12px;background:var(--wa);color:var(--on-wa);font:700 15px var(--f-body);text-decoration:none}
+.wa-hint{text-align:center;margin-top:8px}
 .actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:18px}
-.actions button{flex:1 1 120px}
-#resetBtn{flex-basis:100%}
-button.soft{background:var(--accent-soft);color:var(--accent-ink);box-shadow:none}
-button.install{margin-top:12px;padding:8px 14px;font-size:14px;border-radius:999px}
-#iosHint{margin-top:8px}
+.actions button{flex:1 1 170px}
 button.ghost.confirm{background:var(--danger);color:var(--on-danger);border-color:var(--danger);font-weight:800}
 /* Tam ekran (indirme yoksa ekran görüntüsü için) */
 .full{position:fixed;inset:0;z-index:60;background:var(--bg);display:flex;align-items:center;justify-content:center;
@@ -237,7 +235,7 @@ button.ghost.confirm{background:var(--danger);color:var(--on-danger);border-colo
 <div class="wrap">
   <header>
     <div>
-      <h1><span class="hl">PAY</span>LAŞ</h1>
+      <h1><span class="hl">ALMAN</span>USULÜ</h1>
       <p class="sub">Kim ne ödedi, kim kime ne kadar verecek. <span class="badge" id="sampleBadge" hidden>Örnek veri</span></p>
       <button type="button" class="install" id="installBtn" hidden>Uygulamayı yükle</button>
       <p class="hint" id="iosHint" hidden>Yüklemek için Safari’de Paylaş → Ana Ekrana Ekle.</p>
@@ -329,11 +327,11 @@ button.ghost.confirm{background:var(--danger);color:var(--on-danger);border-colo
     <div class="total"><span>Toplam</span><span class="num" id="total">₺0,00</span></div>
     <p class="lbl">Kim kime ödeyecek</p>
     <div class="transfers" id="transfers"></div>
-    <a class="wa" id="groupBtn" href="https://wa.me/" target="_blank" rel="noopener" hidden>WhatsApp grubuna gönder</a>
+    <a class="wa" id="groupBtn" href="https://wa.me/" target="_blank" rel="noopener" hidden>WhatsApp'ta paylaş</a>
+    <p class="hint wa-hint" id="groupHint" hidden></p>
     <details class="more" id="balDetails"><summary>Kişi bakiyeleri</summary><div class="bal" id="balances"></div></details>
     <div class="actions">
-      <button type="button" id="shotBtn">Görseli indir</button>
-      <button type="button" class="soft" id="shareBtn" hidden>Paylaş</button>
+      <button type="button" class="ghost" id="shotBtn">Görseli kaydet</button>
       <button type="button" class="ghost" id="resetBtn">Her şeyi sıfırla</button>
     </div>
     <div class="toast" id="toast"></div>
@@ -347,6 +345,8 @@ button.ghost.confirm{background:var(--danger);color:var(--on-danger);border-colo
 
 <script>
 const IS_APP=true;
+const canShareFiles=(()=>{try{return !!(navigator.canShare&&navigator.canShare({files:[new File([new Blob(['x'],{type:'image/png'})],'t.png',{type:'image/png'})]}))}catch(e){return false}})();
+const shareImg=()=>IS_APP&&canShareFiles;
 const KEY='hesap-bolus-v1', HKEY='hesap-bolus-gecmis-v1';
 const DEFAULT_DESCS=['Akşam yemeği','Kahvaltı','Market','Kahve','Taksi','Benzin','Konaklama','Bilet'];
 const PCOL=['#1c7ed6','#fd7e14','#7048e8','#82c91e','#e64980','#15aabf','#fcc419','#364fc7'];
@@ -439,9 +439,9 @@ function compute(){
 /* Mesajlar */
 const waLink=t=>'https://wa.me/?text='+encodeURIComponent(t);
 function reqText(t){const a=person(t.from),b=person(t.to);
-  return `Merhaba ${a.name} 👋\nPAYLAŞ hesabına göre ödemen: ${fmtC(t.c)}\nAlıcı: ${b.holder||b.name}\nIBAN: ${ibanFmt(b.iban)}`}
+  return `Merhaba ${a.name} 👋\nAlman Usulü hesabına göre ödemen gereken: ${fmtC(t.c)}\nAlıcı: ${b.holder||b.name}\nIBAN: ${ibanFmt(b.iban)}`}
 function groupText(){const {total,tr}=compute();
-  const out=[`PAYLAŞ · ${new Date().toLocaleDateString('tr-TR',{day:'numeric',month:'long'})} · Toplam ${fmtC(total)}`,''];
+  const out=[`Alman Usulü · ${new Date().toLocaleDateString('tr-TR',{day:'numeric',month:'long'})} · Toplam ${fmtC(total)}`,''];
   const creds=[];tr.forEach(t=>{if(!creds.includes(t.to))creds.push(t.to)});
   creds.forEach(cid=>{const c=person(cid);tr.filter(t=>t.to===cid).forEach(t=>out.push(`${name(t.from)} → ${c.name}: ${fmtC(t.c)}`));
     if(c.iban)out.push(`${c.holder||c.name} · IBAN: ${ibanFmt(c.iban)}`);out.push('')});
@@ -672,6 +672,8 @@ function render(){
     return `<div class="tr"><div class="pair">${av(a)}<b>${esc(a.name)}</b><span class="arrow">→</span>${av(b)}<b>${esc(b.name)}</b></div><div class="amtcol"><span class="num">${fmtC(t.c)}</span>${act}</div></div>`}).join('')
     :(S.expenses.length?'<div class="done">Herkes ödeşti ✓</div>':'<div class="empty">Harcama eklenince burada görünür.</div>');
   const g=$('groupBtn');g.hidden=!tr.length;if(tr.length)g.href=waLink(groupText());
+  const gh=$('groupHint');gh.hidden=!tr.length;gh.textContent=shareImg()?'Özet görseli ve IBAN bilgileri birlikte gider.':'Ödemeler ve IBAN bilgileri mesaj olarak gider.';
+  if(tr.length)warmImage();
   $('balances').innerHTML=S.people.length?S.people.map(p=>{const c=bal[p.id];
     const st=c>0?'get':c<0?'owe':'even';const lab=c>0?'alacaklı':c<0?'borçlu':'eşit';
     return `<span class="who">${av(p)}<span class="nm">${esc(p.name)}</span></span><span class="pill ${st}">${lab}</span><span class="num ${c>0?'pos':c<0?'neg':''}">${c>0?'+':''}${fmtC(c)}</span>`}).join(''):'<span class="empty" style="grid-column:1/-1">Kişi eklenince bakiyeler burada görünür.</span>';
@@ -809,7 +811,7 @@ function scanDone(msg,kind){$('scanBox').hidden=false;$('scanRow').className='sc
 function hideScan(){$('scanBox').hidden=true}
 let scanning=false;
 function pickPhoto(inputId){
-  if(!IS_APP){flash('Fiş tarama, telefona yüklediğin PAYLAŞ uygulamasında çalışır.');return}
+  if(!IS_APP){flash('Fiş tarama, telefona yüklediğin Alman Usulü uygulamasında çalışır.');return}
   if(!S.people.length){flash('Önce kişi ekle.');return}
   if(scanning)return;$(inputId).click()}
 $('scanBtn').addEventListener('click',()=>pickPhoto('scanCam'));
@@ -885,7 +887,7 @@ function css(v,fb){return getComputedStyle(document.documentElement).getProperty
 const today=()=>new Date().toLocaleDateString('tr-TR',{day:'numeric',month:'long',year:'numeric'});
 async function makeImage(){
   const FN={d:'Unbounded, "Arial Black", sans-serif',b:'"Plus Jakarta Sans", system-ui, sans-serif'};
-  const sampleTxt='PAYLAŞ ğüşiöçİı ₺0123456789→✓';
+  const sampleTxt='ALMAN USULÜ ğüşiöçİı ₺0123456789→✓';
   try{await Promise.all(['800 54px Unbounded','800 52px "Plus Jakarta Sans"','700 30px "Plus Jakarta Sans"','600 28px "Plus Jakarta Sans"','500 24px "Plus Jakarta Sans"'].map(f=>document.fonts.load(f,sampleTxt)))}catch(e){}
   const {total,tr}=compute();
   const W=1080,P=88;
@@ -901,9 +903,9 @@ async function makeImage(){
   const label=t=>{x.fillStyle=C.muted;x.font=`700 21px ${FN.b}`;x.fillText(t.toLocaleUpperCase('tr-TR').split('').join(' '),P,y);y+=36};
   let y=124;
   x.textBaseline='alphabetic';
-  x.font=`800 54px ${FN.d}`;const wP=x.measureText('PAY').width;
-  rr(P-12,y-50,wP+24,64,12,C.acc);x.fillStyle=C.onAcc;x.fillText('PAY',P,y);
-  x.fillStyle=C.ink;x.fillText('LAŞ',P+wP+18,y);
+  x.font=`800 50px ${FN.d}`;const wP=x.measureText('ALMAN').width;
+  rr(P-12,y-47,wP+24,60,12,C.acc);x.fillStyle=C.onAcc;x.fillText('ALMAN',P,y);
+  x.fillStyle=C.ink;x.fillText('USULÜ',P+wP+18,y);
   x.fillStyle=C.muted;x.font=`500 26px ${FN.b}`;right(today(),W-P,y-10);
   y+=96;
   x.fillStyle=C.muted;x.font=`600 26px ${FN.b}`;x.fillText('Toplam',P,y+6);
@@ -934,44 +936,43 @@ async function makeImage(){
   z.drawImage(A,0,0);
   return cv;
 }
-let busy=false,ready=null;
+let busy=false,imgCache=null,warmT=null;
 function stamp(){const d=new Date();return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`}
 function showFull(url,msg){$('fullImg').src=url;const h=$('fullHint');h.textContent=msg;h.style.opacity='1';$('full').hidden=false;clearTimeout(h.t);h.t=setTimeout(()=>h.style.opacity='0',2600)}
-const stateKey=()=>JSON.stringify([S,H.palette,new Date().toDateString()]);
-async function buildFile(){
-  const key=stateKey();
-  if(ready&&ready.key===key)return ready.file;
-  const cv=await makeImage();
-  const blob=await new Promise(r=>cv.toBlob(r,'image/png'));
-  ready={key,cv,file:blob?new File([blob],`paylas-ozet-${stamp()}.png`,{type:'image/png'}):null};
-  if(!ready.file)throw new Error('png');
-  return ready.file;
-}
-function saveFile(f){const url=URL.createObjectURL(f);const a=document.createElement('a');a.href=url;a.download=f.name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),15000)}
-const canShareFiles=(()=>{try{return !!(navigator.canShare&&navigator.canShare({files:[new File([new Blob(['x'],{type:'image/png'})],'t.png',{type:'image/png'})]}))}catch(e){return false}})();
-$('shareBtn').hidden=!canShareFiles;
-async function withBusy(btn,label,fn){if(busy)return;busy=true;btn.textContent='Hazırlanıyor…';try{await fn()}finally{busy=false;btn.textContent=label}}
-function fallbackShot(){if(ready&&ready.cv)showFull(ready.cv.toDataURL('image/png'),'Ekran görüntüsü al · kapatmak için dokun');else flash('Görsel hazırlanamadı, tekrar dene.')}
-$('shotBtn').addEventListener('click',()=>{
-  if(!S.people.length){flash('Önce kişi ve harcama ekle.');return}
-  withBusy($('shotBtn'),'Görseli indir',async()=>{
-    try{saveFile(await buildFile());flash('Görsel indirildi.')}catch(e){fallbackShot()}
-  });
+const imgKey=()=>JSON.stringify([S.people,S.expenses,new Date().toDateString()]);
+async function buildFile(){const k=imgKey();if(imgCache&&imgCache.k===k)return imgCache.file;
+  const cv=await makeImage();const blob=await new Promise(r=>cv.toBlob(r,'image/png'));if(!blob)throw new Error('png');
+  imgCache={k,cv,file:new File([blob],`alman-usulu-ozet-${stamp()}.png`,{type:'image/png'})};return imgCache.file}
+function fallbackShot(){if(imgCache&&imgCache.cv)showFull(imgCache.cv.toDataURL('image/png'),'Ekran görüntüsü al · kapatmak için dokun');else flash('Görsel hazırlanamadı, tekrar dene.')}
+function warmImage(){if(!shareImg())return;clearTimeout(warmT);warmT=setTimeout(()=>{buildFile().catch(()=>{})},600)}
+function openOut(url){const a=document.createElement('a');a.href=url;a.target='_blank';a.rel='noopener';document.body.appendChild(a);a.click();a.remove()}
+/* WhatsApp'ta paylaş: uygulamada görsel + mesaj birlikte (paylaşım menüsünden WhatsApp seçilir); diğer yerlerde mesaj */
+$('groupBtn').addEventListener('click',async e=>{
+  if(!shareImg())return;
+  e.preventDefault();if(busy)return;busy=true;const g=$('groupBtn');const label=g.textContent;g.textContent='Hazırlanıyor…';
+  try{
+    let f;try{f=await buildFile()}catch(err){openOut(waLink(groupText()));return}
+    try{await navigator.share({files:[f],text:groupText()})}
+    catch(err){if(err&&err.name==='AbortError')return;
+      if(err&&err.name==='NotAllowedError'){flash('Görsel hazır, göndermek için tekrar dokun.');return}
+      openOut(waLink(groupText()))}
+  }finally{busy=false;g.textContent=label}
 });
-$('shareBtn').addEventListener('click',()=>{
+function saveFile(f){const url=URL.createObjectURL(f);const a=document.createElement('a');a.href=url;a.download=f.name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),15000)}
+$('shotBtn').addEventListener('click',async()=>{
+  if(busy)return;
   if(!S.people.length){flash('Önce kişi ve harcama ekle.');return}
-  withBusy($('shareBtn'),'Paylaş',async()=>{
-    let f;try{f=await buildFile()}catch(e){fallbackShot();return}
-    try{await navigator.share({files:[f]})}
-    catch(e){
-      if(e&&e.name==='AbortError')return;
-      if(e&&e.name==='NotAllowedError'){flash('Görsel hazır. Göndermek için Paylaş’a tekrar dokun.');return}
-      try{saveFile(f);flash('Paylaşılamadı, görsel indirildi.')}catch(_){fallbackShot()}
-    }
-  });
+  busy=true;const btn=$('shotBtn');const label=btn.textContent;btn.textContent='Hazırlanıyor…';
+  try{saveFile(await buildFile());flash('Görsel telefona kaydedildi.')}catch(e){fallbackShot()}finally{busy=false;btn.textContent=label}
 });
 $('full').addEventListener('click',()=>$('full').hidden=true);
+/* Logo dar ekrana sığmazsa küçülsün */
+function fitLogo(){const h=document.querySelector('h1');if(!h)return;h.style.fontSize='';let fs=parseFloat(getComputedStyle(h).fontSize),g=0;
+  while(h.scrollWidth>h.clientWidth+1&&fs>18&&g++<40){fs-=1;h.style.fontSize=fs+'px'}}
+try{document.fonts.ready.then(fitLogo)}catch(e){}
+window.addEventListener('resize',fitLogo);
 render();
+fitLogo();
 /* Uygulama: tema rengi, kurulum, çevrimdışı çalışma */
 function syncThemeColor(){const m=document.querySelector('meta[name="theme-color"]');if(m)m.setAttribute('content',css('--bg','#f5f5f5'))}
 syncThemeColor();

@@ -1,7 +1,7 @@
 {
-  "name": "Paylaş",
-  "short_name": "Paylaş",
-  "description": "Kim ne ödedi, kim kime ne kadar verecek. Grup harcamalarını bölüş.",
+  "name": "Alman Usulü",
+  "short_name": "Alman Usulü",
+  "description": "Alman usulü hesap bölüşme: fişi tara, kim ne aldıysa ona dağıt, IBAN ile iste.",
   "lang": "tr",
   "dir": "ltr",
   "start_url": "./",

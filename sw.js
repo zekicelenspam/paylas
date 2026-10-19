@@ -1,5 +1,5 @@
 // PAYLAŞ: internet varken her açılışta en yeni sürümü yükler, yoksa cihazdaki kopyayla açılır.
-const VERSION='paylas-v3';
+const VERSION='paylas-v4';
 const OCRC='paylas-ocr';
 const FONTS='paylas-fonts';
 const SHELL=['./','./index.html','./manifest.webmanifest','./icon-192.png','./icon-512.png'];
