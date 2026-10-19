@@ -23,7 +23,7 @@ img{max-width:100%}
 [hidden]{display:none!important}
 </style>
 <style>
-/* Layout: tek sütun, yumuşak kartlar — kişiler, harcama girişi (eşit ya da kalem kalem), liste, hesaplaşma.
+/* Layout: tek sütun, yumuşak kartlar — kişiler, harcama girişi (eşit bölüşme, fişten tutar okuma), liste, hesaplaşma.
    Kimlik: mercan; ALMAN (vurgu bloğu) + USULÜ logotipi, bölünmüş adisyon simgesi.
    Ham değerler (-l açık, -d koyu); mod blokları bunlardan seçer. */
 :root{
@@ -133,35 +133,17 @@ button.av{cursor:pointer}
 .sb-sum.warn{color:var(--owe)}
 .sb-act{color:var(--accent-ink);font-weight:700;white-space:nowrap}
 .split-body{display:grid;gap:10px;margin-top:2px}
-/* Fiş tarama + kalem kalem */
+/* Fiş tarama: sadece toplam tutar */
 .modes{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
 .modes button{flex:1 1 140px;padding:10px 12px;font-size:14px}
 .modes .cam{flex-basis:100%;padding:12px;font-size:15px}
+.modes .link{flex:0 0 auto;margin:0 auto;padding:2px 4px;font-size:14px}
+.hint.tip{background:var(--field);border-radius:10px;padding:8px 10px;color:var(--ink)}
 .scan{display:grid;gap:8px;background:var(--field);border-radius:12px;padding:10px 12px;margin-top:10px}
 .scan-row{display:flex;justify-content:space-between;gap:10px;font-size:14px;font-weight:600}
 .scan-row.ok{color:var(--get)} .scan-row.bad{color:var(--owe)}
 .bar{height:6px;border-radius:999px;background:var(--line);overflow:hidden}
 .bar i{display:block;height:100%;width:0;background:var(--accent);border-radius:999px;transition:width .3s}
-.items{display:grid;gap:10px;margin-top:14px}
-.items ul{list-style:none;margin:0;padding:0;display:grid;gap:8px}
-.it{background:var(--field);border:1px solid var(--line);border-radius:14px;padding:10px;display:grid;gap:8px}
-.it-top{display:flex;gap:6px;align-items:center}
-.it-top input{background:var(--paper);padding:9px 11px}
-.it-name{flex:1 1 auto}
-.it-amt{flex:0 0 108px;text-align:right;font-weight:700}
-.it-who{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
-.wchip{display:inline-flex;align-items:center;gap:6px;background:transparent;color:var(--ink);border:1px solid var(--line);border-radius:999px;padding:2px 10px 2px 2px;font:600 13px var(--f-body);box-shadow:none;opacity:.55}
-.wchip .av{width:22px;height:22px;font-size:11px;filter:grayscale(1)}
-.wchip.on{opacity:1;background:var(--accent-soft);border-color:var(--accent-ink)}
-.wchip.on .av{filter:none}
-.it-note{font-size:12px;color:var(--muted);font-weight:600}
-.it-sum{display:grid;gap:4px;background:var(--accent-soft);border-radius:12px;padding:10px 12px;font-size:14px}
-.it-sum .top{display:flex;justify-content:space-between;gap:10px;font-weight:700}
-.it-sum .chk{font-size:13px;font-weight:600}
-.it-sum .chk.ok{color:var(--get)} .it-sum .chk.bad{color:var(--owe)}
-.per{display:flex;flex-wrap:wrap;gap:6px 12px;font-size:13px;color:var(--ink)}
-.per span{display:inline-flex;gap:5px;align-items:center}
-.per .av{width:18px;height:18px;font-size:9px}
 .combo{position:relative;flex:1 1 170px;min-width:0}
 .combo input{padding-right:70px}
 .combo .caret{position:absolute;right:4px;top:50%;transform:translateY(-50%);background:transparent;color:var(--muted);padding:6px 9px;font-size:12px;box-shadow:none}
@@ -281,22 +263,14 @@ button.ghost.confirm{background:var(--danger);color:var(--on-danger);border-colo
       </div>
       <div class="quick" id="quickDescs"></div>
       <div class="modes">
-        <button type="button" class="soft cam" id="scanBtn">📷 Fişin fotoğrafını çek</button>
-        <button type="button" class="ghost" id="galleryBtn">Galeriden seç</button>
-        <button type="button" class="ghost" id="itemsBtn">Kalem kalem gir</button>
+        <button type="button" class="soft cam" id="scanBtn">📷 Tutarı fişten oku</button>
+        <button type="button" class="link" id="galleryBtn">ya da galeriden seç</button>
       </div>
       <input type="file" id="scanCam" accept="image/*" capture="environment" hidden>
       <input type="file" id="scanFile" accept="image/*" hidden>
       <div class="scan" id="scanBox" hidden>
         <div class="scan-row" id="scanRow"><span id="scanMsg"></span><span class="num" id="scanPct"></span></div>
         <div class="bar" id="scanBarWrap"><i id="scanBar"></i></div>
-      </div>
-      <div class="items" id="itemsBox" hidden>
-        <div class="lbl-row"><p class="lbl">Kalemler · kim ne aldı?</p><button type="button" class="link" id="itemsOff">Eşit böl</button></div>
-        <p class="hint">Her kalemde alan kişilere dokun. Kimse seçilmezse herkese bölünür.</p>
-        <ul id="itemList"></ul>
-        <button type="button" class="ghost" id="addItem">+ Kalem ekle</button>
-        <div class="it-sum" id="itemsSum"></div>
       </div>
       <div class="field">
         <p class="lbl">Ödeyen</p>
@@ -310,6 +284,7 @@ button.ghost.confirm{background:var(--danger);color:var(--on-danger);border-colo
         <div class="split-body" id="splitBody" hidden>
           <p class="hint">Bu harcamada olmayanların üstüne dokun, hesaba katılmasınlar.</p>
           <div class="pick" id="expSplit"></div>
+          <p class="hint tip">💡 Sadece bazılarının ödeyeceği bir şey varsa (ör. içki), onu <b>ayrı harcama</b> olarak ekle ve sadece onları seç.</p>
         </div>
       </div>
       <div class="err" id="expErr"></div>
@@ -363,9 +338,8 @@ const inputAmt=n=>Number(n).toLocaleString('tr-TR',{useGrouping:false,minimumFra
 const sample=()=>{const a=uid(),b=uid(),c=uid(),d=uid();return{sample:true,lastPayer:a,
   people:[{id:a,name:'Ali',color:PCOL[0]},{id:b,name:'Ayşe',color:PCOL[4]},{id:c,name:'Can',color:PCOL[1]},{id:d,name:'Elif',color:PCOL[2]}],
   expenses:[
-    {id:uid(),desc:'Akşam yemeği',amount:1500,payer:a,split:[a,b,c,d],items:[
-      {name:'Adana Kebap ×2',amount:640,who:[a,c]},{name:'Urfa Kebap',amount:320,who:[d]},{name:'Çoban Salata',amount:150,who:[]},
-      {name:'Ayran ×3',amount:120,who:[a,b,c]},{name:'Künefe',amount:220,who:[b,d]},{name:'Su ×2',amount:50,who:[]}]},
+    {id:uid(),desc:'Akşam yemeği',amount:2400,payer:a,split:[a,b,c,d]},
+    {id:uid(),desc:'Rakı',amount:900,payer:a,split:[a,c]},
     {id:uid(),desc:'Taksi',amount:360,payer:c,split:[a,c,d]},
     {id:uid(),desc:'Market',amount:850,payer:b,split:[a,b,c,d]}]}};
 let S,H;
@@ -381,7 +355,7 @@ if(!H.ibans||typeof H.ibans!=='object')H.ibans={};
 S.people.forEach(p=>{if(!PCOL.includes(p.color)){const m=H.colors[low(p.name)];p.color=PCOL.includes(m)&&!S.people.some(q=>q!==p&&q.color===m)?m:nextColor(p.id)}});
 if(!S.sample)S.people.forEach(p=>{remember('names',p.name);H.colors[low(p.name)]=p.color;if(p.iban)H.ibans[low(p.name)]={iban:p.iban,holder:p.holder||''}});
 let confirmReset=false,resetTimer=null,colorFor=null,editId=null;
-const F={payer:null,split:new Set(),known:new Set(),open:false,items:null,scanTotal:null};
+const F={payer:null,split:new Set(),known:new Set(),open:false};
 const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(S));localStorage.setItem(HKEY,JSON.stringify(H))}catch(e){}};
 const $=id=>document.getElementById(id);
 const person=id=>S.people.find(p=>p.id===id)||{name:'?',color:PCOL[0]};
@@ -400,7 +374,7 @@ function ibanValid(s){const v=ibanNorm(s);if(!/^[A-Z]{2}\d{2}[A-Z0-9]{10,30}$/.t
   const r=(v.slice(4)+v.slice(0,4)).replace(/[A-Z]/g,ch=>String(ch.charCodeAt(0)-55));let m=0;for(const d of r)m=(m*10+(+d))%97;return m===1}
 const ibanFmt=s=>ibanNorm(s).replace(/(.{4})/g,'$1 ').trim();
 
-/* Hesap: kuruş cinsinden; kalemli harcamada her kalem seçilen kişilere, seçilmemişse herkese bölünür */
+/* Hesap: kuruş cinsinden; harcama dahil olanlar arasında eşit bölünür (eski sürümün kalemli kayıtları da okunur) */
 // Kesin payları topla, kuruşa en büyük kalan yöntemiyle yuvarla: toplam birebir tutar, kimse 1 kuruştan fazla sapmaz
 function splitExact(parts){
   const ex={};let total=0;
@@ -590,35 +564,11 @@ function syncForm(){
   const ids=S.people.map(p=>p.id);
   ids.forEach(id=>{if(!F.known.has(id)){F.known.add(id);F.split.add(id)}});
   [...F.known].forEach(id=>{if(!ids.includes(id)){F.known.delete(id);F.split.delete(id)}});
-  if(F.items)F.items.forEach(it=>{it.who=it.who.filter(id=>ids.includes(id))});
   if(!ids.includes(F.payer))F.payer=ids.includes(S.lastPayer)?S.lastPayer:(ids[0]||null);
 }
 function renderQuick(){
   const cur=low(desc.value.trim());
   $('quickDescs').innerHTML=H.descs.slice(0,5).map(d=>`<button type="button" class="qchip ${low(d)===cur?'on':''}" data-q="${esc(d)}">${esc(d)}</button>`).join('');
-}
-function itemCents(it){const v=parseAmt(it.amt);return isFinite(v)?Math.round(v*100):0}
-function renderItems(){
-  const on=Array.isArray(F.items);
-  $('itemsBox').hidden=!on;$('splitField').hidden=on;$('itemsBtn').hidden=on;
-  $('expAmt').readOnly=on;
-  if(!on)return;
-  $('itemList').innerHTML=F.items.map(it=>`<li class="it" data-it="${it.id}">
-    <div class="it-top"><input class="it-name" data-f="name" value="${esc(it.name)}" placeholder="Kalem" maxlength="40" aria-label="Kalem adı"><input class="it-amt num" data-f="amt" inputmode="decimal" value="${esc(it.amt)}" placeholder="₺" aria-label="Kalem tutarı"><button type="button" class="x" data-itdel="${it.id}" aria-label="Kalemi sil">×</button></div>
-    <div class="it-who">${S.people.map(p=>`<button type="button" class="wchip ${it.who.includes(p.id)?'on':''}" data-who="${p.id}" aria-pressed="${it.who.includes(p.id)}">${av(p)}${esc(p.name)}</button>`).join('')}<span class="it-note" ${it.who.length?'hidden':''}>Herkese bölünür</span></div>
-  </li>`).join('');
-  updateItemsSum();
-}
-function updateItemsSum(){
-  if(!Array.isArray(F.items))return;
-  const ids=S.people.map(p=>p.id);const all=ids.filter(id=>F.split.has(id));const everyone=all.length?all:ids;
-  const {out,total:sum}=splitExact(F.items.map(it=>({c:itemCents(it),who:it.who.length?it.who:everyone})));
-  $('expAmt').value=sum?inputAmt(sum/100):'';
-  let chk='';
-  if(F.scanTotal!=null){const t=Math.round(F.scanTotal*100);
-    chk=t===sum?`<span class="chk ok">Fiş toplamıyla tutuyor ✓</span>`:`<span class="chk bad">Fişte ${fmtC(t)} yazıyor, ${fmtC(Math.abs(t-sum))} fark var. Yanlış okunan tutarı düzelt.</span>`}
-  const per=S.people.filter(p=>out[p.id]).map(p=>`<span>${av(p)}${esc(p.name)} <b class="num">${fmtC(out[p.id])}</b></span>`).join('');
-  $('itemsSum').innerHTML=`<div class="top"><span>Toplam</span><span class="num">${fmtC(sum)}</span></div>${chk}${per?`<div class="per">${per}</div>`:''}`;
 }
 function renderForm(){
   syncForm();
@@ -630,7 +580,6 @@ function renderForm(){
   const all=S.people.length>0&&S.people.every(p=>F.split.has(p.id));
   $('expSplit').innerHTML=S.people.length?`<button type="button" class="all ${all?'on':''}" data-all="1" aria-pressed="${all}">Herkes</button>`+S.people.map(p=>`<label><input type="checkbox" class="sr" value="${p.id}" ${F.split.has(p.id)?'checked':''}>${av(p)}${esc(p.name)}</label>`).join(''):'';
   $('splitToggle').setAttribute('aria-expanded',String(F.open));$('splitBody').hidden=!F.open;$('splitAct').textContent=F.open?'Kapat':'Değiştir';
-  renderItems();
   updateSplitSum();
 }
 function updateSplitSum(){
@@ -641,18 +590,17 @@ function updateSplitSum(){
   const who=n===S.people.length?'Herkes':(n<=2?sel.map(p=>p.name).join(', '):`${n} kişi`);
   sum.textContent=totalC>0?`${who} · kişi başı ${fmtC(Math.floor(totalC/n))}`:who;sum.className='sb-sum';
 }
-function resetForm(){editId=null;$('expAmt').value='';desc.value='';syncClear();F.items=null;F.scanTotal=null;F.split=new Set(S.people.map(p=>p.id));F.open=false;$('expErr').textContent='';hideScan()}
+function resetForm(){editId=null;$('expAmt').value='';desc.value='';syncClear();F.split=new Set(S.people.map(p=>p.id));F.open=false;$('expErr').textContent='';hideScan()}
 function startEdit(id){
   const e=S.expenses.find(x=>x.id===id);if(!e)return;
   editId=id;closeMenu();hideScan();
   desc.value=e.desc;syncClear();
-  F.payer=has(e.payer)?e.payer:F.payer;F.split=new Set((e.split||[]).filter(has));F.scanTotal=null;
-  if(Array.isArray(e.items)&&e.items.length)F.items=e.items.map(it=>({id:uid(),name:it.name,amt:inputAmt(it.amount),who:(it.who||[]).filter(has)}));
-  else if(e.shares){F.items=Object.keys(e.shares).filter(has).map(k=>({id:uid(),name:`${name(k)} payı`,amt:inputAmt(e.shares[k]),who:[k]}));F.split=new Set(S.people.map(p=>p.id))}
-  else F.items=null;
-  F.open=!F.items&&F.split.size!==S.people.length;
+  F.payer=has(e.payer)?e.payer:F.payer;F.split=new Set((e.split||[]).filter(has));
+  if(!F.split.size)F.split=new Set(S.people.map(p=>p.id));
+  F.open=F.split.size!==S.people.length;
   $('expAmt').value=inputAmt(e.amount);
   $('expErr').textContent='';render();
+  if((Array.isArray(e.items)&&e.items.length)||e.shares)scanDone('Bu eski kayıt kalem kalem bölünmüştü. Kaydedersen dahil olanlar arasında eşit bölünür.','');
   $('formCard').scrollIntoView({behavior:'smooth',block:'start'});
 }
 
@@ -722,7 +670,7 @@ function openMenu(){
   const exact=items.some(d=>low(d)===lq);
   let html=items.map((d,i)=>`<li role="option" data-i="${i}"><button type="button" class="pick-item" data-pick="${esc(d)}">${esc(d)}</button><button type="button" class="x" aria-label="${esc(d)} listeden kaldır" data-forget="${esc(d)}">×</button></li>`).join('');
   if(q&&!exact)html+=`<li class="new"><button type="button" class="pick-item" data-pick="${esc(q)}">“${esc(q)}” olarak ekle</button></li>`;
-  if(!html)html='<li class="none">Yazmaya başla, yeni kalem eklensin.</li>';
+  if(!html)html='<li class="none">Yazmaya başla, listeye eklensin.</li>';
   menu.innerHTML=html;menu.hidden=false;desc.setAttribute('aria-expanded','true');act=-1;
 }
 function closeMenu(){menu.hidden=true;desc.setAttribute('aria-expanded','false')}
@@ -758,24 +706,8 @@ $('expSplit').addEventListener('click',e=>{if(!e.target.closest('[data-all]'))re
 $('splitToggle').addEventListener('click',()=>{F.open=!F.open;renderForm()});
 $('cancelEdit').addEventListener('click',()=>{resetForm();render()});
 
-/* Kalem kalem */
-function newItem(n,a){return{id:uid(),name:n||'',amt:a||'',who:[]}}
-$('itemsBtn').addEventListener('click',()=>{
-  if(!S.people.length){flash('Önce kişi ekle.');return}
-  F.items=[newItem()];F.scanTotal=null;F.split=new Set(S.people.map(p=>p.id));renderForm();
-  const f=$('itemList').querySelector('.it-name');if(f)f.focus()});
-$('itemsOff').addEventListener('click',()=>{F.items=null;F.scanTotal=null;hideScan();renderForm();updateSplitSum()});
-$('addItem').addEventListener('click',()=>{F.items.push(newItem());renderItems();const l=[...$('itemList').querySelectorAll('.it-name')].pop();if(l)l.focus()});
-$('itemList').addEventListener('input',e=>{const li=e.target.closest('[data-it]');const f=e.target.dataset.f;if(!li||!f)return;
-  const it=F.items.find(x=>x.id===li.dataset.it);if(!it)return;it[f]=e.target.value;if(f==='amt'){updateItemsSum();updateSplitSum()}});
-$('itemList').addEventListener('click',e=>{
-  const d=e.target.closest('[data-itdel]');if(d){F.items=F.items.filter(x=>x.id!==d.dataset.itdel);if(!F.items.length)F.items.push(newItem());renderItems();return}
-  const w=e.target.closest('[data-who]');if(!w)return;const li=w.closest('[data-it]');const it=F.items.find(x=>x.id===li.dataset.it);if(!it)return;
-  const pid=w.dataset.who;it.who=it.who.includes(pid)?it.who.filter(x=>x!==pid):[...it.who,pid];
-  const on=it.who.includes(pid);w.classList.toggle('on',on);w.setAttribute('aria-pressed',String(on));
-  li.querySelector('.it-note').hidden=!!it.who.length;updateItemsSum()});
 
-/* Fiş tarama: fotoğraf telefonda okunur (Tesseract), satırlar kalemlere çevrilir */
+/* Fiş tarama: fotoğraf telefonda okunur (Tesseract), fişteki toplam tutar Tutar kutusuna yazılır */
 const OCR={w:null,p:null,onp:null};
 function loadScript(src){return new Promise((res,rej)=>{const s=document.createElement('script');s.src=src;s.async=true;s.onload=()=>res();s.onerror=()=>rej(new Error('script'));document.head.appendChild(s)})}
 async function getWorker(){
@@ -811,8 +743,8 @@ function scanDone(msg,kind){$('scanBox').hidden=false;$('scanRow').className='sc
 function hideScan(){$('scanBox').hidden=true}
 let scanning=false;
 function pickPhoto(inputId){
-  if(!IS_APP){flash('Fiş tarama, telefona yüklediğin Alman Usulü uygulamasında çalışır.');return}
-  if(!S.people.length){flash('Önce kişi ekle.');return}
+  if(!IS_APP){scanDone('Fişten okuma, telefona yüklediğin Alman Usulü uygulamasında çalışır. Burada tutarı elle yaz.','');return}
+  if(!S.people.length){scanDone('Önce kişi ekle.','bad');return}
   if(scanning)return;$(inputId).click()}
 $('scanBtn').addEventListener('click',()=>pickPhoto('scanCam'));
 $('galleryBtn').addEventListener('click',()=>pickPhoto('scanFile'));
@@ -827,13 +759,11 @@ async function scanReceipt(file){
     showScan('Fiş okunuyor…',0);
     let text='';try{const r=await w.recognize(cv);text=r&&r.data?r.data.text:''}catch(e){scanDone('Fiş okunamadı, tekrar dene.','bad');return}
     const res=parseReceipt(text);
-    if(!res.items.length){scanDone('Fişte kalem bulamadım. Fişi düz bir yere koy, yakından ve aydınlıkta çek. İstersen kalemleri elle gir.','bad');return}
-    F.items=res.items.map(it=>newItem(it.name,inputAmt(it.amount)));F.scanTotal=res.total;F.split=new Set(S.people.map(p=>p.id));
+    const fromTotal=res.total!=null&&res.total>0;const tot=fromTotal?res.total:(res.sum>0?res.sum:null);
+    if(!tot){scanDone('Fişte toplam tutarı bulamadım. Fişi düz bir yere koy, yakından ve aydınlıkta çek ya da tutarı elle yaz.','bad');return}
+    $('expAmt').value=inputAmt(tot);updateSplitSum();
     if(!desc.value.trim())setDesc('Adisyon');
-    renderForm();
-    const t=res.total!=null&&Math.round(res.total*100)===Math.round(res.sum*100);
-    scanDone(`${res.items.length} kalem bulundu${t?', toplam tutuyor ✓':''}. Şimdi kim ne aldıysa ona dokun.`,'ok');
-    $('itemsBox').scrollIntoView({behavior:'smooth',block:'start'});
+    scanDone(fromTotal?`Toplam ${fmt(tot)} yazıldı ✓ Fişle karşılaştırıp kaydet.`:`Toplam satırı okunamadı, kalemleri topladım: ${fmt(tot)}. Fişle karşılaştır, gerekirse düzelt.`,'ok');
   }finally{scanning=false;$('scanBtn').disabled=false;$('galleryBtn').disabled=false;OCR.onp=null}
 }
 
@@ -842,20 +772,12 @@ $('expForm').addEventListener('submit',e=>{e.preventDefault();
   const err=$('expErr');
   if(!S.people.length){err.textContent='Önce en az bir kişi ekle.';return}
   if(!has(F.payer)){err.textContent='Ödeyen kişiyi seç.';return}
-  const d=desc.value.trim()||'Harcama';let rec;
-  if(Array.isArray(F.items)){
-    const rows=F.items.map(it=>({name:it.name.trim(),c:itemCents(it),who:it.who.filter(has)})).filter(r=>r.name||r.c);
-    const bad=rows.find(r=>!r.c);if(bad){err.textContent=`“${bad.name||'Kalem'}” için tutar gir ya da kalemi sil.`;return}
-    const sum=rows.reduce((a,r)=>a+r.c,0);
-    if(!rows.length||sum<=0){err.textContent='En az bir kalem ve tutar gir.';return}
-    rec={desc:d,amount:sum/100,payer:F.payer,split:S.people.map(p=>p.id),items:rows.map(r=>({name:r.name||'Kalem',amount:r.c/100,who:r.who}))};
-  }else{
-    const amt=parseAmt($('expAmt').value);
-    if(!(amt>0)){err.textContent='Tutarı sayı olarak gir, örn. 450 ya da 89,90.';$('expAmt').focus();return}
-    const split=S.people.filter(p=>F.split.has(p.id)).map(p=>p.id);
-    if(!split.length){F.open=true;renderForm();err.textContent='Harcamaya dahil en az bir kişi seç.';return}
-    rec={desc:d,amount:Math.round(amt*100)/100,payer:F.payer,split};
-  }
+  const d=desc.value.trim()||'Harcama';
+  const amt=parseAmt($('expAmt').value);
+  if(!(amt>0)){err.textContent='Tutarı sayı olarak gir, örn. 450 ya da 89,90.';$('expAmt').focus();return}
+  const split=S.people.filter(p=>F.split.has(p.id)).map(p=>p.id);
+  if(!split.length){F.open=true;renderForm();err.textContent='Harcamaya dahil en az bir kişi seç.';return}
+  const rec={desc:d,amount:Math.round(amt*100)/100,payer:F.payer,split};
   err.textContent='';unsample();closeMenu();
   if(desc.value.trim()&&d!=='Adisyon')remember('descs',d);
   S.lastPayer=F.payer;
